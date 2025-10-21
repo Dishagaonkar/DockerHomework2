@@ -11,31 +11,35 @@
 
 
 
+# docker/Dockerfile.app
 FROM python:3.11-alpine
 
-
+# Install build tools for dependencies
 RUN apk add --no-cache gcc musl-dev
 
-
+# Working directory inside the container
 WORKDIR /app
 
+# Copy and install requirements
 COPY src/requirements.txt ./requirements.txt
-
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-
+# Copy the entire project into the container
 COPY . .
 
+# Make src importable as a top-level module
+ENV PYTHONPATH=/app
 
-ENV FLASK_APP=app.py \
-    FLASK_RUN_HOST=0.0.0.0 \
-    FLASK_RUN_PORT=5000 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+# Tell Flask where to find the app instance
+ENV FLASK_APP=src.app:app
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=5000
 
 EXPOSE 5000
 
+# Start Flask using the CLI
 CMD ["flask", "run"]
+
+
 
 
