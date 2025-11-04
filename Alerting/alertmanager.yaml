@@ -28,15 +28,18 @@ spec:
         app: alertmanager
     spec:
       containers:
-      - name: alertmanager
-        image: prom/alertmanager:latest
-        args:
-          - "--config.file=/etc/alertmanager/alertmanager.yml"
-        ports:
-          - containerPort: 9093
-        volumeMounts:
-          - name: alertmanager-config
-            mountPath: /etc/alertmanager
+        - name: alertmanager
+          image: prom/alertmanager:latest
+          args:
+            - "--config.file=/etc/alertmanager/alertmanager.yml"
+          envFrom:
+            - secretRef:
+                name: slack-webhook
+          ports:
+            - containerPort: 9093
+          volumeMounts:
+            - name: alertmanager-config
+              mountPath: /etc/alertmanager
       volumes:
         - name: alertmanager-config
           configMap:

@@ -18,7 +18,7 @@ data:
     receivers:
     - name: 'slack-notifications'
       slack_configs:
-      - api_url: 'https://hooks.slack.com/services/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'
+      - api_ur '${SLACK_URL}'
         channel: '#k8s-alertss'
         send_resolved: true
         title: |
