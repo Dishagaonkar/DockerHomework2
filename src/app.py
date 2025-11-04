@@ -4,15 +4,29 @@ from bson.objectid import ObjectId # For ObjectId to work
 from bson.errors import InvalidId # For catching InvalidId exception for ObjectId
 import os
 
-mongodb_host = os.environ.get('MONGO_HOST', 'localhost')
-mongodb_port = int(os.environ.get('MONGO_PORT', '27017'))
-client = MongoClient(mongodb_host, mongodb_port)    #Configure the connection to the database
-db = client.camp2016    #Select the database
-todos = db.todo #Select the collection
+# mongodb_host = os.environ.get('MONGO_HOST', 'localhost')
+# mongodb_port = int(os.environ.get('MONGO_PORT', '27017'))
+# client = MongoClient(mongodb_host, mongodb_port)    #Configure the connection to the database
+# db = client.camp2016    #Select the database
+# todos = db.todo #Select the collection
+
+import time
+time.sleep(120)
+
+# Correct MongoDB connection
+mongo_uri = os.environ.get('MONGO_URI', 'mongodb://mongo:27017/todosdb')
+client = MongoClient(mongo_uri)
+
+db = client.todosdb  # ✅ matches the database name in URI
+todos = db.todo
+
+@app.route("/")
+def index():
+    raise Exception("Intentional crash to test liveness probe")
 
 app = Flask(__name__)
-title = "TODO with Flask"
-heading = "ToDo Reminder"
+title = "TODO with Flask(New Version)"
+heading = "ToDo Reminder(New Version)"
 #modify=ObjectId()
 
 def redirect_url():

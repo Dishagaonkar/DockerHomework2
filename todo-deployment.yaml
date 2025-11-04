@@ -2,8 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: todo-web
+  namespace: todo
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: todo-web
@@ -11,11 +17,16 @@ spec:
     metadata:
       labels:
         app: todo-web
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/"
+
     spec:
       containers:
         - name: web
-          image: dishagaonkar2002/todo-flask:1.0.3
-          imagePullPolicy: IfNotPresent
+          image: hv2179/todo-flask:1.0.7
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
@@ -25,23 +36,11 @@ spec:
             httpGet:
               path: /
               port: 5000
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
               port: 5000
-            initialDelaySeconds: 20
-            periodSeconds: 10
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: todo-web
-spec:
-  type: LoadBalancer
-  selector:
-    app: todo-web
-  ports:
-    - port: 80
-      targetPort: 5000
+            initialDelaySeconds: 60
+            periodSeconds: 15
